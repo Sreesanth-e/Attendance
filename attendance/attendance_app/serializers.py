@@ -1,20 +1,31 @@
 from rest_framework import serializers
-from .models import Section, Student, Attendance
+from .models import Section, Student, AttendanceSession, Attendance
 
 class SectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Section
-        fields = ['id', 'course_name', 'section_name']
+        fields = ['id', 'name', 'code', 'teacher']
 
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
-        fields = ['id', 'roll_number', 'name', 'section']
+        fields = '__all__'
+
+class AttendanceSessionSerializer(serializers.ModelSerializer):
+    section_name = serializers.CharField(source='section.name', read_only=True)
+
+    class Meta:
+        model = AttendanceSession
+        fields = '__all__'
 
 class AttendanceSerializer(serializers.ModelSerializer):
     student_name = serializers.CharField(source='student.name', read_only=True)
-    roll_number = serializers.CharField(source='student.roll_number', read_only=True)
+    student_roll = serializers.CharField(source='student.roll_number', read_only=True)
 
     class Meta:
         model = Attendance
-        fields = ['id', 'student', 'student_name', 'roll_number', 'date', 'status']
+        fields = '__all__'
+
+class ImageUploadSerializer(serializers.Serializer):
+    image = serializers.ImageField()
+    session_id = serializers.IntegerField()
